@@ -52,11 +52,26 @@ def get_map_value(initial_value, map_index):
 			# Now that we know our range, we can calculate the new value
 			# Okay, so if our value is 3 and we're in the range 2-5
 			# 2, 3, 4 ,5
-			pass
+			# We need the index of our value in the range
+			# So 3 - 2 = 1
+			# 1 is our index
+			# Say our value is 5
+			# 5 - 2 = 3
+			# 3 is our index
+			# Or we could just add it to the start of the range
+			# Say our corresponding range is 5-8 (5, 6, 7, 8)
+			# 5 + 3 = 8
+			ix = initial_value - source_range[0]
+			mapped_value = dest_range[0] + ix
+			return get_map_value(mapped_value, map_index + 1)
+	else:
+		# If we didn't find the range, the value is 1:1
+		return get_map_value(initial_value, map_index + 1)
 
 
-	get_map_value(initial_value, map_index + 1)
-
-
+locations = []
 for seed in seeds:
-	print(get_map_value(seed, 0))
+	locations.append(get_map_value(seed, 0))
+
+print(locations)
+print(min(locations))

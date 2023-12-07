@@ -1,8 +1,6 @@
 # Okay so checking every seed is not the answer
 # But we KNOW we want the lowest location
-# And we know all the locations
-# Let's just use the lowest location we have
-# We can kinda cheat like this cause we know there's a location 0
+# Let's just start at 0
 with open('input.txt') as fin:
 	text = fin.read()
 	maps = text.split('\n\n')

@@ -21,7 +21,7 @@ from functools import total_ordering
 class Card:
 	# we'll convert every card to a number for simplicity
 	# Doesn't really matter what the value itself is
-	CARD_VALUES = {c:i for i, c in enumerate('123456789TJQKA')}
+	CARD_VALUES = {c:i for i, c in enumerate('23456789TJQKA')}
 
 	def __init__(self, hand):
 		self.cards = [self.CARD_VALUES[c] for c in hand]
@@ -58,10 +58,20 @@ class Card:
 	def __eq__(self, other):
 		return self.getHandRank() == other.getHandRank() and self.cards == other.cards
 
-with open('sample_input.txt') as fin:
+	def __repr__(self):
+		return str(self.cards)
+
+hand_bids = []
+with open('input.txt') as fin:
 	for line in fin:
 		hand, bid = line.split()
+		hand_bids.append((Card(hand), int(bid)))
 
+hand_bids = sorted(hand_bids, key=lambda x: x[0])
+bid_values = [b * (i+1) for i, (_, b) in enumerate(hand_bids)]
+
+print(hand_bids)
+print(sum(bid_values))
 
 
 

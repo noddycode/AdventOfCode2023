@@ -21,10 +21,11 @@ starting_nodes = [n for n in tree.keys() if n.endswith('A')]
 
 # Can we math it so we can skip counting the iterations?
 # Modulo!
-largest_count = 0
+counts = {}
 for node in starting_nodes:
 	count = 0
 	curr_node = node
+	curr_instruction = 0
 	while True:
 		# This will tell us where in the iterations we are without having to count them directly
 		curr_instruction = count % len(instructions)
@@ -37,9 +38,45 @@ for node in starting_nodes:
 		count += 1
 
 		if curr_node.endswith('Z'):
-			largest_count = max(largest_count, count)
+			counts[node] = count
 			break
 
+# Now we know how many iterations it takes to get to each node
+# What can we do with this information?
+# We have to figure out how to line them all up
+# https://stackoverflow.com/questions/19310482/javascript-function-to-multiply-two-numbers-until-they-equal-each-other
+# So how do we apply this for all of our nodes?
+# Let's loop over each node's count and multuply it until it's the highest
+# And repeat this until they all match
+
+largest_count = max(counts.values())
+curr_counts = counts.copy()
+done = False
+while not done:
+	for node, count in counts.items():
+		curr_count = curr_counts[node]
+		while curr_count < largest_count:
+			curr_count += count
+
+		# Let's be smarter
+		# if curr_count < largest_count:
+		# 	curr_count = count * (largest_count // count)
+		# 	curr_count += count
+		#
+		# print(curr_count)
+
+		largest_count = curr_count
+		curr_counts[node] = curr_count
+
+		# print(curr_counts.values())
+
+		# Check if they're all even now
+		if len(set(curr_counts.values())) == 1:
+			done = True
+			break
+
+
+print(len(starting_nodes))
 print(largest_count)
 
 

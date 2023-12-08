@@ -42,42 +42,47 @@ for node in starting_nodes:
 			break
 
 # Now we know how many iterations it takes to get to each node
+# We know we have to repeat the instructions at least that many times
+# To end up at the same place
 # What can we do with this information?
 # We have to figure out how to line them all up
 # https://stackoverflow.com/questions/19310482/javascript-function-to-multiply-two-numbers-until-they-equal-each-other
 # So how do we apply this for all of our nodes?
-# Let's loop over each node's count and multuply it until it's the highest
-# And repeat this until they all match
+# Let's start at the lowest and work our way up
 
-largest_count = max(counts.values())
-curr_counts = counts.copy()
-done = False
-while not done:
-	for node, count in counts.items():
-		curr_count = curr_counts[node]
-		while curr_count < largest_count:
-			curr_count += count
+node_counts = sorted(counts.items(), key=lambda x: x[1])
+curr_node = 0
+curr_high = node_counts[1][1]
+for i in range(len(node_counts)):
+	lower = node_counts[i][1]
 
-		# Let's be smarter
-		# if curr_count < largest_count:
-		# 	curr_count = count * (largest_count // count)
-		# 	curr_count += count
-		#
-		# print(curr_count)
-
-		largest_count = curr_count
-		curr_counts[node] = curr_count
-
-		# print(curr_counts.values())
-
-		# Check if they're all even now
-		if len(set(curr_counts.values())) == 1:
-			done = True
+	curr = lower
+	while True:
+		curr += lower
+		if curr % curr_high == 0 and curr % lower == 0:
+			print(curr)
 			break
 
+	curr_high = curr
+print(curr_high)
 
-print(len(starting_nodes))
-print(largest_count)
+# Let's think about how this works
+# So we have two numbers, 15 and 10
+# We want to know how many times we need to loop these numbers to get them to be the same
+# So we start with the lower number, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
+# Then we do 15, 30, 45, 60, 75, 90, 105, 120, 135, 150
+# We can see they match at 30
+# So we'd have to do 30 steps before they match
+# That's two loops of 15 and three loops of 10
+# Now we add another number, 20
+# We already know we need 30 steps to sync the first two
+# So we start with 30, 60, 90, 120, 150, 180, 210, 240, 270, 300
+# Then we do 20, 40, 60, 80, 100, 120, 140, 160, 180, 200
+# We can see they match at 60
+# So we'd have to do 60 steps before all three match
+# That's why we work from the highest common number first
+
+
 
 
 

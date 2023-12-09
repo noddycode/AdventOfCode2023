@@ -63,7 +63,8 @@ class Card:
 		return self.hand
 
 hand_bids = []
-with open('input.txt') as fin:
+# https://www.reddit.com/r/adventofcode/comments/18cr4xr/2023_day_7_better_example_input_not_a_spoiler/
+with open('edge_case_input.txt') as fin:
 	for line in fin:
 		hand, bid = line.split()
 		hand_bids.append((Card(hand), int(bid)))

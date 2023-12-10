@@ -49,54 +49,61 @@ def get_adjacent_points(point) -> set[tuple]:
 # We could do simple BFS but I just assume part 2 will add weights
 
 nodes: dict[tuple[int,int], tuple[int, tuple[int,int]]] = {starting_point: (0, None)}
-visited = {starting_point}
+visited = set()
 stack = [starting_point]
-split_point = None
 
 while stack:
-	curr_point = stack.pop()
+	min_point = min(stack, key=lambda x: nodes[x][0])
+	curr_point = stack.pop(stack.index(min_point))
+	visited.add(curr_point)
 	neighbors = get_adjacent_points(curr_point)
-
-	# # Check for a dead end
 	neighbors -= visited
-	if not neighbors:
-		backtrack_point = curr_point
-		while backtrack_point != split_point:
-			backtracked = nodes.pop(backtrack_point)
-			if not backtracked[1]:
-				break
-			backtrack_point = backtracked[1]
-	# Get our split point so we know how far to backtrack
-	if len(neighbors) > 1:
-		split_point = curr_point
 
+	# # Check for and prune dead ends
+	# if not neighbors:
+	# 	backtrack_point = curr_point
+	# 	while True:
+	# 		backtracked = nodes.pop(backtrack_point)
+	# 		backtrack_point = backtracked[1]
+	# 		# Backtrack until we find a point with more than one edge
+	# 		backtrack_neighbors = get_adjacent_points(backtrack_point)
+	# 		# Don't count 2 point cycles
+	# 		if len(backtrack_neighbors) > 1:
+	# 			break
+
+	# For right now, it doesn't matter which neighbor we pick cause they're all the same distance
 	for neighbor in neighbors:
-		if neighbor in visited:
-			continue
-		# We don't know which nodes exist initially, so we'll add them as we go
-		# Our graph is unweighted, so any adjacent node is automatically 1 away
-		distance = nodes[curr_point][0] + 1
-		if neighbor not in nodes or distance < nodes[neighbor][0]:
+		distance = nodes[curr_point][0]+1
+
+		if (neighbor not in nodes) or distance < nodes[neighbor][0]:
 			nodes[neighbor] = (distance, curr_point)
 
-		stack.append(neighbor)
+	stack.extend(neighbors)
+
+max_point = max(nodes.keys(), key=lambda x: nodes[x][0])
 
 def render_pipes():
 	with open('pipes.html', 'w') as fout:
-		fout.write('<style>body{font-family:monospace;} .pipe{color:red} .start{color:green}</style>')
+		fout.write('<style>body{font-family:monospace;}</style>')
 		for y in range(len(pipes)):
 			for x in range(len(pipes[y])):
 				if pipes[y][x] == 'S':
-					fout.write(f'<span class="start">{pipes[y][x]}</span>')
+					fout.write(f'<span style="color: green">{pipes[y][x]}</span>')
+				elif (x, y) == max_point:
+					fout.write(f'<span style="color: blue">E</span>')
 				elif (x, y) in nodes:
-					fout.write(f'<span class="pipe">{pipes[y][x]}</span>')
+					# Color based on distance
+					distance = nodes[(x, y)][0]
+					color = (255-distance*.02, 0, 0)
+					color = ' '.join(str(int(c)) for c in color)
+					fout.write(f'<span style="color:rgb({color})">{pipes[y][x]}</span>')
 				else:
 					fout.write(pipes[y][x])
 			fout.write('<br>')
 
 render_pipes()
 
-print(max(nodes.items(), key=lambda x: x[1][0]))
+print(max_point, nodes[max_point][0])
 
 
 

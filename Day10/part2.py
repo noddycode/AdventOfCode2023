@@ -78,6 +78,18 @@ while True:
 	if curr_point is None:
 		break
 
+# Looking at our pipe render, we can see that the only continuation from the end is up
+# So let's get the path to that node to complete the loop
+
+target = (max_point[0], max_point[1]-1)
+curr_point = target
+while True:
+	path_points.add(curr_point)
+	curr_point = nodes[curr_point][1]
+	if curr_point is None:
+		break
+
+
 def render_pipes():
 	with open('pipes.html', 'w') as fout:
 		fout.write('<style>body{font-family:monospace;}</style>')
@@ -88,7 +100,10 @@ def render_pipes():
 				elif (x, y) == max_point:
 					fout.write(f'<span style="color: green">E</span>')
 				elif (x, y) in path_points:
-					fout.write(f'<span style="color: blue">{pipes[y][x]}</span>')
+					distance = nodes[(x, y)][0]
+					color = (0,0,255-distance*.02)
+					color = ' '.join(str(int(c)) for c in color)
+					fout.write(f'<span style="color: rgb({color})">{pipes[y][x]}</span>')
 				elif (x, y) in nodes:
 					# Color based on distance
 					distance = nodes[(x, y)][0]
